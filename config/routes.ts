@@ -77,10 +77,17 @@
               {
                 name: '淘气包会员',
                 icon: 'table',
-                path: '/vip',
+                path: '/tao-recharge',
                 // authority: 'consume',
-                component: './Vip',
+                component: './TaoRecharge',
               },
+              // {
+              //   name: '淘气包会员',
+              //   icon: 'table',
+              //   path: '/vip',
+              //   // authority: 'consume',
+              //   component: './Vip',
+              // },
               // {
               //   name: '淘气包充值记录',
               //   icon: 'table',
