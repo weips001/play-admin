@@ -21,7 +21,7 @@ export async function add(data: TableListItem) {
 }
 
 export async function update(data: TableListParams) {
-  return request(`/api/taoRecharge/${data.id}`, {
+  return request(`/api/vip/${data.id}`, {
     method: 'PUT',
     data,
   });

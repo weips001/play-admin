@@ -1,13 +1,21 @@
 export type TableListItem = {
   id: string;
-  compName: string;
-  status: string;
-  address: string;
-  bossName: string;
-  bossPhone: string;
-  dueDate: string;
-  dueDate: string;
-  createdAt: number;
+  cardId: string;
+  cardType: '0' | '1';
+  createdAt: Date;
+  isYearCard: boolean;
+  money: number;
+  name: string;
+  overdate: Date;
+  phone: string;
+  placeId: string;
+  remark: string;
+  restTotal: number;
+  sex: '0' | '1';
+  total: number;
+  updatedAt: Date;
+  usedTotal: number;
+  vipId: string;
 };
 
 export type TableListPagination = {

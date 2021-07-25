@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button, Modal } from 'antd';
 import ProForm, {
   ModalForm,
@@ -40,6 +40,16 @@ const UserMoadl: React.FC<UserMoadlProps> = (props) => {
   const { visible, currentRow, onCancel, onOk } = props;
   const formRef = useRef<FormInstance>();
   const [activeConsume, setActiveConsume] = useState(consumeNum);
+
+  useEffect(() => {
+    console.log('---', currentRow);
+    if (currentRow) {
+      // formRef.current?.setFieldsValue({
+      //   deleteNum: undefined,
+      // });
+    }
+  }, [currentRow]);
+
   const onVisibleChange = (visible: boolean) => {
     if (visible) {
       const { name, phone, restTotal } = currentRow;

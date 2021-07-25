@@ -31,3 +31,15 @@ export type TableListParams = {
   filter?: Record<string, any[]>;
   sorter?: Record<string, any>;
 };
+
+export type VipParams = {
+  birthday: Date;
+  createdAt: Date;
+  id: string;
+  name: string;
+  phone: string;
+  placeId: string;
+  remark: string;
+  sex: '0' | '1';
+  updatedAt: Date;
+};

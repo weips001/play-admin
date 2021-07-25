@@ -106,6 +106,25 @@ const TableList: React.FC = () => {
     }
   };
 
+  const canUse = (record: TableListItem): boolean => {
+    const { cardType, overdate, restTotal } = record;
+    // 0 代表次卡， 1 代表时间卡
+    if (cardType === '0') {
+      if (overdate) {
+        if (moment(overdate).isValid()) {
+          return moment(overdate).isAfter(moment()) && restTotal > 0;
+        }
+      }
+      return restTotal > 0;
+    }
+    if (overdate) {
+      if (moment(overdate).isValid()) {
+        return moment(overdate).isAfter(moment());
+      }
+    }
+    return false;
+  };
+
   /**
    * 删除节点
    *
@@ -124,6 +143,11 @@ const TableList: React.FC = () => {
       },
       onCancel() {},
     });
+  };
+
+  const consumeTao = (record: TableListItem) => {
+    setConsumeVisible(true);
+    setCurrentRow(record);
   };
 
   const columns: ProColumns<TableListItem>[] = [
@@ -225,25 +249,7 @@ const TableList: React.FC = () => {
           >
             充值
           </a>,
-          <a
-            key="consume"
-            onClick={() => {
-              setConsumeVisible(true);
-              setCurrentRow(record);
-            }}
-          >
-            消费
-          </a>,
-          <a
-            key="config"
-            onClick={() => {
-              handleModalVisible(true);
-              setCurrentRow(record);
-              modalRef.current?.setFieldsValue(record);
-            }}
-          >
-            编辑
-          </a>,
+
           // <a
           //   key="subscribeAlert"
           //   onClick={async () => {
@@ -253,13 +259,30 @@ const TableList: React.FC = () => {
           //   删除
           // </a>,
         ];
-        if (cardType === '1') {
-          if (overdate) {
-            const isDelay = new Date(overdate).getTime() < new Date().getTime();
-            if (isDelay) {
-              return null;
-            }
-          }
+        const consumeBtn = (
+          <a
+            key="consume"
+            onClick={() => {
+              consumeTao(record);
+            }}
+          >
+            消费
+          </a>
+        );
+        const editBtn = (
+          <a
+            key="config"
+            onClick={() => {
+              handleModalVisible(true);
+              setCurrentRow(record);
+              modalRef.current?.setFieldsValue(record);
+            }}
+          >
+            编辑
+          </a>
+        );
+        if (canUse(record)) {
+          operate.push(consumeBtn, editBtn);
         }
         return operate;
       },
@@ -451,7 +474,7 @@ const TableList: React.FC = () => {
           value.cardType = value.cardType < 0 ? '1' : '0';
           if (currentRow?.id) {
             const params = {
-              ...currentRow,
+              id: currentRow.vipId,
               ...value,
             };
             success = await handleUpdate(params);
@@ -606,17 +629,19 @@ const TableList: React.FC = () => {
         closable={false}
       >
         {currentRow?.id && (
-          <ProDescriptions<TableListItem>
-            column={2}
-            title={currentRow?.compName}
-            request={async () => ({
-              data: currentRow || {},
-            })}
-            params={{
-              id: currentRow?.compName,
-            }}
-            columns={columns as ProDescriptionsItemProps<TableListItem>[]}
-          />
+          <>
+            <ProDescriptions<TableListItem>
+              column={2}
+              title={currentRow?.compName}
+              request={async () => ({
+                data: currentRow || {},
+              })}
+              params={{
+                id: currentRow?.compName,
+              }}
+              columns={columns as ProDescriptionsItemProps<TableListItem>[]}
+            />
+          </>
         )}
       </Drawer>
       <Recharge

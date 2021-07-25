@@ -67,13 +67,13 @@
               // //   path: '/list',
               // //   component: './TableList',
               // // },
-              // {
-              //   name: '畅玩消费',
-              //   icon: 'table',
-              //   path: '/consume',
-              //   // authority: 'consume',
-              //   component: './Consume',
-              // },
+              {
+                name: '畅玩消费',
+                icon: 'table',
+                path: '/consume',
+                // authority: 'consume',
+                component: './Consume',
+              },
               {
                 name: '淘气包会员',
                 icon: 'table',
