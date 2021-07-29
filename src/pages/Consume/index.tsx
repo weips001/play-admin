@@ -16,10 +16,11 @@ import ProDescriptions from '@ant-design/pro-descriptions';
 import type { FormValueType } from './components/UpdateForm';
 import type { CreateUpdateType } from './components/UserModal';
 import type { TableListItem, VipParams } from './data.d';
-import { getTableList, update, add, remove, getTaoList } from './service';
+import { getTableList, update, add, remove, getTaoList, getVipRecord } from './service';
 import { ExclamationCircleOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import UserModal from './components/UserModal';
 import CardRecharge from './components/CardRecharge';
+import RechargeList from './components/RechargeList';
 import ProList from '@ant-design/pro-list';
 import styles from './style.less';
 
@@ -96,20 +97,20 @@ const TableList: React.FC = () => {
   const [modalType, setModalType] = useState<CreateUpdateType>('create');
   const actionRef = useRef<ActionType>();
   const modalRef = useRef<FormInstance>();
+  const [rechargeDataList, setRechargeDataList] = useState([]);
   const [currentRow, setCurrentRow] = useState<TableListItem>();
   const [selectedRowsState, setSelectedRows] = useState<string[]>([]);
 
   const [form] = Form.useForm();
 
   useEffect(() => {
-    const getTaoRechargeList = async () => {
-      await getTaoList({ vipId: vipInfo?.id });
+    const getTaoRechargeList = async (vipId: string) => {
+      const { data } = await getVipRecord(vipId);
+      const { consumeList, rechargeList, recordList } = data;
+      setRechargeDataList(rechargeList);
     };
     if (vipInfo) {
-      getTaoRechargeList();
-      console.log('获取所有有次的记录');
-      console.log('获取充值记录');
-      console.log('获取消费记录');
+      getTaoRechargeList(vipInfo.id);
     }
   }, [vipInfo]);
 
@@ -246,7 +247,7 @@ const TableList: React.FC = () => {
   const onFinish = () => {};
   const reset = () => {
     setTab('settle');
-    setRechargeType('card');
+    setRechargeType('rechargeRecord');
     setIsRecharge(false);
   };
   const onSearch = async (searchKey: string) => {
@@ -317,7 +318,7 @@ const TableList: React.FC = () => {
     setUserMoadlVisible(true);
   };
   let actions = [
-    <Button type="link" onClick={() => takeRecharge('card')}>
+    <Button type="link" onClick={() => takeRecharge('recharge')}>
       充值
     </Button>,
     <Button type="link" onClick={() => takeRecharge('consume')}>
@@ -357,10 +358,10 @@ const TableList: React.FC = () => {
       <ProCard.TabPane key="settle" tab="消费结算">
         内容一
       </ProCard.TabPane>
-      <ProCard.TabPane key="recharge" tab="充值记录">
-        内容二
+      <ProCard.TabPane key="rechargeRecord" tab="充值记录">
+        <RechargeList dataSource={rechargeDataList} />
       </ProCard.TabPane>
-      <ProCard.TabPane key="consume" tab="消费记录">
+      <ProCard.TabPane key="consumeRecord" tab="消费记录">
         内容二
       </ProCard.TabPane>
     </ProCard>

@@ -38,3 +38,11 @@ export async function update(data: TableListParams) {
     data,
   });
 }
+
+export async function getVipRecord(vipId: string) {
+  return request('/api/vip/getVipRecord', {
+    params: {
+      vipId,
+    },
+  });
+}
