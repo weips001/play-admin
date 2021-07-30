@@ -1,8 +1,6 @@
 import type { Effect, Reducer } from 'umi';
 import type { SubscriptionsMapObject } from 'dva';
-import { getUserAuth, getCurrentAllAuth, saveUserInfo } from '@/utils/utils';
-import { setAuthority } from '@/utils/authority';
-import { queryCurrent, query as queryUsers } from '@/services/user';
+import { getVipRecord, getVipList } from './service';
 
 export type VipProps = {
   birthday: string;
@@ -20,93 +18,118 @@ export type TabOptions = 'settle' | 'rechargeRecord' | 'consumeRecord' | 'card' 
 
 export type ConsumeModelState = {
   searchKey: string;
-  vipInfo: VipProps;
-  activeAction: ActionOptions;
-  activeTab: TabOptions;
+  vipInfo?: VipProps;
+  activeAction?: ActionOptions;
+  activeTab?: TabOptions;
+  consumeTableList: any[];
+  rechargeRecord: any[];
+  consumeRecord: any[];
 };
 
 export type ConsumeModelType = {
   namespace: 'consume';
   state: ConsumeModelState;
   effects: {
-    fetch: Effect;
-    fetchCurrent: Effect;
+    fetchVipRecord: Effect;
+    fetchVipInfo: Effect;
   };
   reducers: {
-    saveCurrentUser: Reducer<ConsumeModelState>;
-    changeNotifyCount: Reducer<ConsumeModelState>;
+    saveSearchKey: Reducer<ConsumeModelState>;
+    saveVipInfo: Reducer<ConsumeModelState>;
+    saveActiveAction: Reducer<ConsumeModelState>;
+    saveActiveTab: Reducer<ConsumeModelState>;
+    saveConsumeTableList: Reducer<ConsumeModelState>;
+    saveRechargeRecord: Reducer<ConsumeModelState>;
+    saveConsumeRecord: Reducer<ConsumeModelState>;
   };
-  subscriptions: SubscriptionsMapObject;
+};
+
+const initState = {
+  searchKey: '',
+  vipInfo: undefined,
+  activeAction: undefined,
+  activeTab: undefined,
+  consumeTableList: [],
+  rechargeRecord: [],
+  consumeRecord: [],
 };
 
 const ConsumeModel: ConsumeModelType = {
   namespace: 'consume',
 
-  state: {
-    currentUser: {},
-    currentAllAuthList: [],
-  },
+  state: initState,
 
   effects: {
-    *fetch(_, { call, put }) {
-      const response = yield call(queryUsers);
+    *fetchVipRecord({ payload }, { call, put }) {
+      const { data } = yield call(getVipRecord, payload.vipId);
+      const { consumeList, rechargeRecord, consumeRecord } = data;
       yield put({
-        type: 'save',
-        payload: response,
+        type: 'saveConsumeTableList',
+        payload: {
+          consumeTableList: consumeList,
+        },
+      });
+      yield put({
+        type: 'saveRechargeRecord',
+        payload: {
+          rechargeRecord,
+        },
+      });
+      yield put({
+        type: 'saveConsumeRecord',
+        payload: {
+          consumeRecord,
+        },
       });
     },
-    *fetchCurrent(_, { call, put }) {
-      const response = yield call(queryCurrent);
-      const userInfo = response.data;
-      const { auth } = userInfo;
-      saveUserInfo(userInfo);
-      // const allAuth = getUserAuth(data.role, auth);
-      // const currentAuthList = getCurrentAllAuth();
-      setAuthority(auth);
-      yield put({
-        type: 'saveCurrentUser',
-        payload: userInfo,
-      });
-      return userInfo;
-      // yield put({
-      //   type: 'saveCurrentAuthList',
-      //   payload: currentAuthList,
-      // });
+    *fetchVipInfo({ payload }, { call }) {
+      const vipRes = yield call(getVipList, payload.searchKey);
+      return vipRes;
     },
   },
 
   reducers: {
-    saveCurrentAuthList(state, action) {
+    saveSearchKey(state = initState, { payload }) {
       return {
         ...state,
-        currentAllAuthList: action.payload,
+        searchKey: payload.searchKey,
       };
     },
-    saveCurrentUser(state, action) {
+    saveVipInfo(state = initState, { payload }) {
       return {
         ...state,
-        currentUser: action.payload || {},
+        vipInfo: payload.vipInfo,
       };
     },
-    changeNotifyCount(
-      state = {
-        currentUser: {},
-      },
-      action,
-    ) {
+    saveActiveAction(state = initState, { payload }) {
       return {
         ...state,
-        currentUser: {
-          ...state.currentUser,
-          notifyCount: action.payload.totalCount,
-          unreadCount: action.payload.unreadCount,
-        },
+        activeAction: payload.activeAction,
       };
     },
-  },
-  subscriptions: {
-    init({ dispatch }) {
-      console.log('in');
+    saveActiveTab(state = initState, { payload }) {
+      return {
+        ...state,
+        activeTab: payload.activeTab,
+      };
+    },
+    saveConsumeTableList(state = initState, { payload }) {
+      return {
+        ...state,
+        consumeTableList: payload.consumeTableList,
+      };
+    },
+    saveRechargeRecord(state = initState, { payload }) {
+      return {
+        ...state,
+        rechargeRecord: payload.rechargeRecord,
+      };
+    },
+    saveConsumeRecord(state = initState, { payload }) {
+      return {
+        ...state,
+        consumeRecord: payload.consumeRecord,
+      };
     },
   },
 };

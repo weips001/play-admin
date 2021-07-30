@@ -1,7 +1,7 @@
 import request from '@/utils/request';
 import type { TableListParams, TableListItem } from './data.d';
 
-export async function getTableList(searchKey) {
+export async function getVipList(searchKey: string) {
   return request('/api/vip', {
     params: {
       searchKey,
@@ -43,6 +43,15 @@ export async function getVipRecord(vipId: string) {
   return request('/api/vip/getVipRecord', {
     params: {
       vipId,
+    },
+  });
+}
+
+export async function consume({ id, deleteNum }) {
+  return request(`/api/taoRecharge/consume/${id}`, {
+    method: 'POST',
+    data: {
+      deleteNum,
     },
   });
 }

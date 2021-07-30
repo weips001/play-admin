@@ -8,7 +8,7 @@ interface RechargeProps {
   dataSource: any[];
 }
 
-const RechargeList = (props: RechargeProps) => {
+const RechargeRecord = (props: RechargeProps) => {
   const { dataSource } = props;
 
   return (
@@ -48,4 +48,4 @@ const RechargeList = (props: RechargeProps) => {
   );
 };
 
-export default RechargeList;
+export default RechargeRecord;

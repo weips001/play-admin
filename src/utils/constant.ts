@@ -11,50 +11,50 @@ export const rechargeType = [
     value: 10,
     cardType: '0',
     money: 300,
-    month: 12
+    month: 12,
   },
   {
     label: '500元',
     value: 20,
     cardType: '0',
     money: 500,
-    month: 24
+    month: 24,
   },
   {
     label: '年卡',
     value: -1,
     cardType: '1',
     money: 1200,
-    month: 12
-  }
-]
+    month: 12,
+  },
+];
 
 export const sexType = [
   {
     label: '男',
-    value: '0'
+    value: '0',
   },
   {
     label: '女',
-    value: '1'
-  }
-]
+    value: '1',
+  },
+];
 
 export const cardTypeEnum = {
   0: '次卡',
-  1: '年卡'
-}
-function generateConsumeOption (total = 3, unit = '次') {
-  let res = []
-  for (let i =0 ; i < total; i++) {
+  1: '年卡',
+};
+function generateConsumeOption(total = 3, unit = '次') {
+  const res = [];
+  for (let i = 0; i < total; i++) {
     res.push({
       label: `${i + 1} ${unit}`,
-      value: i + 1
-    })
+      value: i + 1,
+    });
   }
-  return res
+  return res;
 }
-export const consumeNum = generateConsumeOption(5)
+export const consumeNum = generateConsumeOption(6);
 
 export const gameBiType = [
   {
@@ -68,7 +68,7 @@ export const gameBiType = [
     value: 200,
     total: 270,
     month: 12,
-  }
-]
+  },
+];
 
-export const consumeGameBi = generateConsumeOption(30, '个')
+export const consumeGameBi = generateConsumeOption(30, '个');

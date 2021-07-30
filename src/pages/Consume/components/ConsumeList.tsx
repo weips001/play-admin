@@ -1,67 +1,36 @@
+import { useEffect, useRef } from 'react';
 import ProTable from '@ant-design/pro-table';
+import { Tag } from 'antd';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
 import type { TableListItem } from '../data';
-import { sexType, rechargeType, cardTypeEnum } from '@/utils/constant';
+// import { sexType, rechargeType, cardTypeEnum } from '@/utils/constant';
 
-function ConsumeList() {
+function ConsumeList(props) {
+  const { dataSource, setConsumeVisible } = props;
+  console.log('in', dataSource.length);
+  const actionRef = useRef<ActionType>();
+  useEffect(() => {
+    actionRef.current?.reload();
+  }, [dataSource]);
   const columns: ProColumns<TableListItem>[] = [
-    {
-      title: '姓名',
-      dataIndex: 'name',
-      render: (dom, entity) => {
-        return (
-          <a
-            onClick={() => {
-              setCurrentRow(entity);
-              setShowDetail(true);
-            }}
-          >
-            {dom}
-          </a>
-        );
-      },
-    },
     {
       title: '卡号',
       dataIndex: 'cardId',
       order: 1,
     },
     {
-      title: '手机号',
-      dataIndex: 'phone',
-      // initialValue: localStorage.getItem('phone'),
-      order: 2,
-    },
-    {
-      title: '创建日期',
-      hideInSearch: true,
-      dataIndex: 'createdAt',
-      valueType: 'dateTime',
-    },
-    {
-      title: '生日',
-      hideInSearch: true,
-      hideInTable: true,
-      dataIndex: 'birthday',
-      valueType: 'date',
-    },
-    {
-      title: '性别',
-      hideInSearch: true,
-      dataIndex: 'sex',
-      valueEnum: {
-        0: '男',
-        1: '女',
-      },
-    },
-    {
       title: '卡种',
       dataIndex: 'cardType',
-      valueEnum: cardTypeEnum,
+      render(_, { cardType }) {
+        const cardName = cardType === '0' ? '次卡' : '时间卡';
+        const color = cardType === '0' ? '#5BD8A6' : '#f50';
+        return <Tag color={color}>{cardName}</Tag>;
+      },
     },
     {
       title: '金额',
       hideInSearch: true,
+      valueType: 'money',
       dataIndex: 'money',
     },
     {
@@ -95,91 +64,36 @@ function ConsumeList() {
         const { cardType, overdate } = record;
         const operate = [
           <a
-            key="recharge"
-            onClick={() => {
-              setRechargeVisible(true);
-              setCurrentRow(record);
-            }}
-          >
-            充值
-          </a>,
-
-          // <a
-          //   key="subscribeAlert"
-          //   onClick={async () => {
-          //     await confirmDel(record.id);
-          //   }}
-          // >
-          //   删除
-          // </a>,
-        ];
-        const consumeBtn = (
-          <a
             key="consume"
             onClick={() => {
-              consumeTao(record);
+              setConsumeVisible(record);
             }}
           >
             消费
-          </a>
-        );
-        const editBtn = (
-          <a
-            key="config"
-            onClick={() => {
-              handleModalVisible(true);
-              setCurrentRow(record);
-              modalRef.current?.setFieldsValue(record);
-            }}
-          >
-            编辑
-          </a>
-        );
-        if (canUse(record)) {
-          operate.push(consumeBtn, editBtn);
-        }
+          </a>,
+        ];
+
         return operate;
       },
     },
   ];
   return (
     <ProTable<TableListItem>
-      headerTitle="查询表格"
+      headerTitle={null}
       bordered={true}
       actionRef={actionRef}
-      formRef={searchFormRef}
       rowKey="id"
-      search={{
-        labelWidth: 120,
+      options={false}
+      search={false}
+      request={() => {
+        return Promise.resolve({
+          success: true,
+          data: dataSource,
+        });
       }}
-      toolBarRender={() => [
-        // <Upload {...props}>
-        //   <Button icon={<UploadOutlined />}>上传充值记录</Button>
-        // </Upload>,
-        // <Upload {...Userprops}>
-        //   <Button icon={<UploadOutlined />}>上传会员</Button>
-        // </Upload>,
-        <Button
-          type="primary"
-          key="primary"
-          onClick={() => {
-            setCurrentRow(undefined);
-            handleModalVisible(true);
-          }}
-        >
-          <PlusOutlined /> 新增
-        </Button>,
-      ]}
-      request={(params, sorter, filter) => getTableList({ ...params, sorter, filter })}
       columns={columns}
-      rowSelection={{
-        onChange: (_, selectedRows) => {
-          const ids = selectedRows.map((item) => item.id);
-          setSelectedRows(ids);
-        },
-      }}
     />
   );
 }
 
-module.exports = ConsumeList;
+export default ConsumeList;
