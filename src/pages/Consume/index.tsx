@@ -156,6 +156,12 @@ const TableList: React.FC<ConsumeProps> = (props) => {
     } else {
       res = await add(values);
     }
+    dispatch({
+      type: 'consume/saveSearchKey',
+      payload: {
+        searchKey: res.data.phone,
+      },
+    });
     saveVipInfo(res.data);
     Modal.success({
       content: res.msg,
