@@ -19,6 +19,7 @@ import ConsumeList from './components/ConsumeList';
 import ConsumeModal from './components/ConsumeModal';
 import type { ConnectState } from '@/models/connect';
 import type { ConsumeModelState, ActionOptions, TabOptions } from './model';
+import { add, update } from './service';
 
 const { Search } = Input;
 
@@ -142,6 +143,23 @@ const TableList: React.FC<ConsumeProps> = (props) => {
   };
 
   const cancelUserModal = () => {
+    setUserMoadlVisible(false);
+  };
+  const okUserModal = async (values: any) => {
+    let res = {};
+    if (vipInfo) {
+      const params = {
+        ...values,
+        id: vipInfo.id,
+      };
+      res = await update(params);
+    } else {
+      res = await add(values);
+    }
+    saveVipInfo(res.data);
+    Modal.success({
+      content: res.msg,
+    });
     setUserMoadlVisible(false);
   };
   const takeRecharge = (type: ActionOptions) => {
@@ -313,9 +331,11 @@ const TableList: React.FC<ConsumeProps> = (props) => {
         {vipInfo ? showContent : null}
       </ProCard>
       <UserModal
+        vipInfo={vipInfo}
         phone={searchKey}
         modalType={modalType}
         onCancel={cancelUserModal}
+        onOk={okUserModal}
         visible={userMoadlVisible}
       />
       <ConsumeModal
