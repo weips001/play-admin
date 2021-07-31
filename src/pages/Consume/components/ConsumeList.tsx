@@ -5,9 +5,13 @@ import type { ProColumns, ActionType } from '@ant-design/pro-table';
 import type { TableListItem } from '../data';
 // import { sexType, rechargeType, cardTypeEnum } from '@/utils/constant';
 
-function ConsumeList(props) {
+interface CpnsumeListProps {
+  dataSource: TableListItem[];
+  setConsumeVisible: (values: any) => void;
+}
+
+function ConsumeList(props: CpnsumeListProps) {
   const { dataSource, setConsumeVisible } = props;
-  console.log('in', dataSource.length);
   const actionRef = useRef<ActionType>();
   useEffect(() => {
     actionRef.current?.reload();
@@ -61,7 +65,6 @@ function ConsumeList(props) {
       dataIndex: 'option',
       valueType: 'option',
       render: (_, record) => {
-        const { cardType, overdate } = record;
         const operate = [
           <a
             key="consume"

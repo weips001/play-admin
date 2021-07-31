@@ -9,7 +9,7 @@ export type CreateUpdateType = 'create' | 'update';
 
 type ConsumeProps = {
   visible: boolean;
-  currentRow: {
+  currentRow?: {
     cardId: string;
     cardType: string;
     restTotal: number;
@@ -26,7 +26,7 @@ const ConsumeModal: React.FC<ConsumeProps> = (props) => {
   const [activeConsume, setActiveConsume] = useState(consumeNum);
 
   const onVisibleChange = (consumeVisible: boolean) => {
-    if (consumeVisible) {
+    if (consumeVisible && currentRow) {
       const { cardId, cardType, restTotal } = currentRow;
       const values = {
         cardType,
@@ -67,7 +67,7 @@ const ConsumeModal: React.FC<ConsumeProps> = (props) => {
       onFinish={async (values) => {
         const params = {
           deleteNum: values.deleteNum,
-          id: currentRow.id,
+          id: currentRow?.id,
         };
         const { msg } = await consume(params);
         onOk();
