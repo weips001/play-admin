@@ -1,6 +1,5 @@
 import type { Effect, Reducer } from 'umi';
-import type { SubscriptionsMapObject } from 'dva';
-import { getVipRecord, getVipList } from './service';
+import { getVipRecord, getVipList, recharge } from './service';
 
 export type VipProps = {
   birthday: string;
@@ -32,6 +31,7 @@ export type ConsumeModelType = {
   effects: {
     fetchVipRecord: Effect;
     fetchVipInfo: Effect;
+    fetchRecharge: Effect;
   };
   reducers: {
     saveSearchKey: Reducer<ConsumeModelState>;
@@ -85,6 +85,11 @@ const ConsumeModel: ConsumeModelType = {
     *fetchVipInfo({ payload }, { call }) {
       const vipRes = yield call(getVipList, payload.searchKey);
       return vipRes;
+    },
+    *fetchRecharge({ payload }, { call }) {
+      const res = yield call(recharge, payload);
+      return res
+      
     },
   },
 

@@ -2,7 +2,7 @@ import request from '@/utils/request';
 import type { TableListParams, TableListItem } from './data.d';
 
 export async function getTableList(params?: TableListParams) {
-  return request('/api/shoppingRecord', {
+  return request('/api/taoRecord', {
     params,
   });
 }

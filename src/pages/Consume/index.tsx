@@ -17,6 +17,7 @@ import RechargeRecord from './components/RechargeRecord';
 import ConsumeRecord from './components/ConsumeRecord';
 import ConsumeList from './components/ConsumeList';
 import ConsumeModal from './components/ConsumeModal';
+import MultipleVipModal from './components/MultipleVipModal';
 import type { ConnectState } from '@/models/connect';
 import type { ConsumeModelState, ActionOptions, TabOptions } from './model';
 import { add, update } from './service';
@@ -26,6 +27,7 @@ const { Search } = Input;
 interface ConsumeProps extends ConsumeModelState {
   dispatch: Dispatch;
   searchLoading?: boolean;
+  recordLoading?: boolean;
 }
 /**
  * 添加节点
@@ -43,23 +45,19 @@ const TableList: React.FC<ConsumeProps> = (props) => {
     searchLoading,
     consumeRecord,
     consumeTableList,
+    recordLoading,
   } = props;
   const [userMoadlVisible, setUserMoadlVisible] = useState<boolean>(false);
   const [consumeVisible, setConsumeVisible] = useState<boolean>(false);
+  const [multipleVipVisible, setMultipleVipVisible] = useState<boolean>(false);
+  const [multipleVipList, setMultipleVipList] = useState<any[]>([]);
 
   const [currentRow, setCurrentRow] = useState<TableListItem>();
   const [modalType, setModalType] = useState<CreateUpdateType>('create');
   const actionRef = useRef<ActionType>();
 
   useEffect(() => {
-    if (vipInfo) {
-      dispatch({
-        type: 'consume/fetchVipRecord',
-        payload: {
-          vipId: vipInfo.id,
-        },
-      });
-    }
+    fetchVipRecord();
   }, [dispatch, vipInfo]);
 
   const takeNoUserModal = () => {
@@ -120,7 +118,9 @@ const TableList: React.FC<ConsumeProps> = (props) => {
   };
   const onSearch = async (value: string) => {
     if (value) {
-      saveVipInfo(undefined);
+      if (vipInfo) {
+        saveVipInfo(undefined);
+      }
       reset();
       const { data } = await dispatch({
         type: 'consume/fetchVipInfo',
@@ -131,8 +131,10 @@ const TableList: React.FC<ConsumeProps> = (props) => {
       if (data.length) {
         if (data.length === 1) {
           saveVipInfo(data[0]);
-          // setActiveTab('settle');
           serActiveAction('consume');
+        } else {
+          setMultipleVipVisible(true);
+          setMultipleVipList(data);
         }
       } else {
         takeNoUserModal();
@@ -186,7 +188,7 @@ const TableList: React.FC<ConsumeProps> = (props) => {
   const cancelConsumeModal = () => {
     setConsumeVisible(false);
   };
-  const okConsumeModal = () => {
+  const fetchVipRecord = () => {
     if (vipInfo) {
       dispatch({
         type: 'consume/fetchVipRecord',
@@ -195,11 +197,27 @@ const TableList: React.FC<ConsumeProps> = (props) => {
         },
       });
     }
+  };
+  const okConsumeModal = () => {
+    fetchVipRecord();
     setConsumeVisible(false);
   };
   const showConsumeModal = (record) => {
     setCurrentRow(record);
     setConsumeVisible(true);
+  };
+  const rechargeCard = async (payload: any) => {
+    const res = await dispatch({
+      type: 'consume/fetchRecharge',
+      payload,
+    });
+    Modal.success({
+      content: res.msg,
+      onOk() {
+        takeRecharge('consume');
+        fetchVipRecord();
+      },
+    });
   };
   let actions = [
     <Button type="link" onClick={() => takeRecharge('recharge')}>
@@ -225,7 +243,7 @@ const TableList: React.FC<ConsumeProps> = (props) => {
         }}
       >
         <ProCard.TabPane key="card" tab="套卡充值">
-          <CardRecharge />
+          <CardRecharge takeRecharge={rechargeCard} vipInfo={vipInfo} />
         </ProCard.TabPane>
         <ProCard.TabPane key="gameBi" tab="游戏币充值">
           内容二
@@ -242,7 +260,11 @@ const TableList: React.FC<ConsumeProps> = (props) => {
         }}
       >
         <ProCard.TabPane key="settle" tab="消费结算">
-          <ConsumeList dataSource={consumeTableList} setConsumeVisible={showConsumeModal} />
+          <ConsumeList
+            loading={recordLoading}
+            dataSource={consumeTableList}
+            setConsumeVisible={showConsumeModal}
+          />
         </ProCard.TabPane>
         <ProCard.TabPane key="rechargeRecord" tab="充值记录">
           <RechargeRecord dataSource={rechargeRecord} />
@@ -351,6 +373,18 @@ const TableList: React.FC<ConsumeProps> = (props) => {
         onOk={okConsumeModal}
         visible={consumeVisible}
       />
+      <MultipleVipModal
+        visible={multipleVipVisible}
+        onOk={(values) => {
+          saveVipInfo(values);
+          serActiveAction('consume');
+          setMultipleVipVisible(false);
+        }}
+        onCancel={() => {
+          setMultipleVipVisible(false);
+        }}
+        dataSource={multipleVipList}
+      />
     </PageContainer>
   );
 };
@@ -365,5 +399,6 @@ export default connect((state: ConnectState) => {
     activeAction: state.consume.activeAction,
     activeTab: state.consume.activeTab,
     searchLoading: state.loading.effects['consume/fetchVipInfo'],
+    recordLoading: state.loading.effects['consume/fetchVipRecord'],
   };
 })(TableList);

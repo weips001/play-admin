@@ -2,9 +2,10 @@ import request from '@/utils/request';
 import type { TableListParams, TableListItem } from './data.d';
 
 export async function getVipList(searchKey: string) {
-  return request('/api/vip', {
+  return request('/api/vip/getVipBySearchKey', {
     params: {
       searchKey,
+      pageSize: 5,
     },
   });
 }
@@ -53,5 +54,12 @@ export async function consume({ id, deleteNum }) {
     data: {
       deleteNum,
     },
+  });
+}
+
+export async function recharge(data) {
+  return request('/api/taoRecharge', {
+    method: 'POST',
+    data,
   });
 }

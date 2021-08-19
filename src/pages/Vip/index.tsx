@@ -144,26 +144,15 @@ const TableList: React.FC = () => {
       },
     },
     {
-      title: '卡号',
-      dataIndex: 'cardId',
-      order: 1,
-    },
-    {
       title: '手机号',
       dataIndex: 'phone',
       // initialValue: localStorage.getItem('phone'),
       order: 2,
     },
-    {
-      title: '创建日期',
-      hideInSearch: true,
-      dataIndex: 'createdAt',
-      valueType: 'dateTime',
-    },
+
     {
       title: '生日',
       hideInSearch: true,
-      hideInTable: true,
       dataIndex: 'birthday',
       valueType: 'date',
     },
@@ -177,93 +166,66 @@ const TableList: React.FC = () => {
       },
     },
     {
-      title: '卡种',
-      dataIndex: 'cardType',
-      valueEnum: cardTypeEnum,
-    },
-    {
-      title: '金额',
+      title: '创建日期',
       hideInSearch: true,
-      dataIndex: 'money',
+      dataIndex: 'createdAt',
+      valueType: 'dateTime',
     },
-    {
-      title: '总次数',
-      hideInSearch: true,
-      dataIndex: 'total',
-    },
-    {
-      title: '剩余次数',
-      hideInSearch: true,
-      dataIndex: 'restTotal',
-    },
-    {
-      title: '已用次数',
-      hideInSearch: true,
-      dataIndex: 'usedTotal',
-    },
-    {
-      title: '有效期',
-      dataIndex: 'overdate',
-      hideInForm: true,
-      sorter: true,
-      hideInSearch: true,
-      valueType: 'date',
-    },
-    {
-      title: '操作',
-      dataIndex: 'option',
-      valueType: 'option',
-      render: (_, record) => {
-        const { cardType, overdate } = record;
-        const operate = [
-          <a
-            key="recharge"
-            onClick={() => {
-              setRechargeVisible(true);
-              setCurrentRow(record);
-            }}
-          >
-            充值
-          </a>,
-          <a
-            key="consume"
-            onClick={() => {
-              setConsumeVisible(true);
-              setCurrentRow(record);
-            }}
-          >
-            消费
-          </a>,
-          <a
-            key="config"
-            onClick={() => {
-              handleModalVisible(true);
-              setCurrentRow(record);
-              modalRef.current?.setFieldsValue(record);
-            }}
-          >
-            编辑
-          </a>,
-          // <a
-          //   key="subscribeAlert"
-          //   onClick={async () => {
-          //     await confirmDel(record.id);
-          //   }}
-          // >
-          //   删除
-          // </a>,
-        ];
-        if (cardType === '1') {
-          if (overdate) {
-            const isDelay = new Date(overdate).getTime() < new Date().getTime();
-            if (isDelay) {
-              return null;
-            }
-          }
-        }
-        return operate;
-      },
-    },
+    // {
+    //   title: '操作',
+    //   dataIndex: 'option',
+    //   valueType: 'option',
+    //   render: (_, record) => {
+    //     const { cardType, overdate } = record;
+    //     const operate = [
+    //       <a
+    //         key="recharge"
+    //         onClick={() => {
+    //           setRechargeVisible(true);
+    //           setCurrentRow(record);
+    //         }}
+    //       >
+    //         充值
+    //       </a>,
+    //       <a
+    //         key="consume"
+    //         onClick={() => {
+    //           setConsumeVisible(true);
+    //           setCurrentRow(record);
+    //         }}
+    //       >
+    //         消费
+    //       </a>,
+    //       <a
+    //         key="config"
+    //         onClick={() => {
+    //           handleModalVisible(true);
+    //           setCurrentRow(record);
+    //           modalRef.current?.setFieldsValue(record);
+    //         }}
+    //       >
+    //         编辑
+    //       </a>,
+    //       // <a
+    //       //   key="subscribeAlert"
+    //       //   onClick={async () => {
+    //       //     await confirmDel(record.id);
+    //       //   }}
+    //       // >
+    //       //   删除
+    //       // </a>,
+    //     ];
+    //     if (cardType === '1') {
+    //       if (overdate) {
+    //         const isDelay = new Date(overdate).getTime() < new Date().getTime();
+    //         if (isDelay) {
+    //           return null;
+    //         }
+    //       }
+    //     }
+    //     return operate;
+    //   },
+    // },
   ];
   const cancelRechargeModal = () => {
     setRechargeVisible(false);

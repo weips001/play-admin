@@ -1,6 +1,12 @@
 import React, { useRef, useState } from 'react';
 import { Modal, Tag } from 'antd';
-import ProForm, { ModalForm, ProFormText, ProFormRadio, ProFormSelect } from '@ant-design/pro-form';
+import ProForm, {
+  ModalForm,
+  ProFormText,
+  ProFormRadio,
+  ProFormSelect,
+  ProFormTextArea,
+} from '@ant-design/pro-form';
 import type { FormInstance } from 'antd';
 import { consumeNum } from '@/utils/constant';
 import { consume } from '../service';
@@ -107,6 +113,9 @@ const ConsumeModal: React.FC<ConsumeProps> = (props) => {
           options={activeConsume}
         ></ProFormRadio.Group>
       </ProForm.Group>
+      {/* <ProForm.Group>
+        <ProFormTextArea width="md" name="remark" label="备注" />
+      </ProForm.Group> */}
       {/* <ProForm.Group>
         <ProFormDateTimePicker name="createdAt" label="消费时间" />
       </ProForm.Group> */}

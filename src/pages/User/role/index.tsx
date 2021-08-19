@@ -1,11 +1,16 @@
 import { PlusOutlined } from '@ant-design/icons';
 import type { FormInstance } from 'antd';
-import { Button, message, Modal, Drawer } from 'antd';
+import { Button, message, Modal, Drawer, Checkbox, Row, Col, Form, Input } from 'antd';
 import React, { useState, useRef, useEffect } from 'react';
 import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
-import { ModalForm, ProFormText, ProFormCheckbox, ProFormTextArea } from '@ant-design/pro-form';
+import ProForm, {
+  ModalForm,
+  ProFormText,
+  ProFormCheckbox,
+  ProFormTextArea,
+} from '@ant-design/pro-form';
 import type { ProDescriptionsItemProps } from '@ant-design/pro-descriptions';
 import ProDescriptions from '@ant-design/pro-descriptions';
 import type { FormValueType } from './components/UpdateForm';
@@ -20,6 +25,7 @@ import {
   bindAuth,
 } from './service';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import styles from './index.less';
 
 const { confirm } = Modal;
 /**
@@ -73,6 +79,8 @@ const TableList: React.FC = () => {
   const [authInfo, setAuthInfo] = useState<TableListItem>();
   const [selectedRowsState, setSelectedRows] = useState<string[]>([]);
   const [authList, setAuthList] = useState([]);
+  const [authLabel, setAuthLabel] = useState([]);
+  const [form] = Form.useForm();
   useEffect(() => {
     async function getAuthList() {
       const { data = [] } = await getAllAuth();
@@ -158,12 +166,14 @@ const TableList: React.FC = () => {
     {
       title: '角色名称',
       dataIndex: 'roleName',
-      render: (dom, entity) => {
+      render: (dom, record) => {
         return (
           <a
-            onClick={() => {
-              setCurrentRow(entity);
+            onClick={async () => {
+              setCurrentRow(record);
               setShowDetail(true);
+              const { data } = await getAuthFromRole({ roleId: record.id });
+              getAuthLabel(data);
             }}
           >
             {dom}
@@ -231,6 +241,10 @@ const TableList: React.FC = () => {
 
   const onVisibleChange = (visible: boolean) => {
     handleModalVisible(visible);
+  };
+  const getAuthLabel = (ids: string[]) => {
+    const list = authList.filter((auth) => ids.includes(auth.value));
+    setAuthLabel(list);
   };
   return (
     <PageContainer>
@@ -377,17 +391,33 @@ const TableList: React.FC = () => {
         closable={false}
       >
         {currentRow?.id && (
-          <ProDescriptions<TableListItem>
-            column={2}
-            title={currentRow?.userName}
-            request={async () => ({
-              data: currentRow || {},
-            })}
-            params={{
-              id: currentRow?.userName,
-            }}
-            columns={columns as ProDescriptionsItemProps<TableListItem>[]}
-          />
+          <>
+            <ProDescriptions<TableListItem>
+              column={1}
+              title={currentRow?.roleName}
+              request={async () => ({
+                data: currentRow || {},
+              })}
+              params={{
+                id: currentRow?.userName,
+              }}
+              columns={columns as ProDescriptionsItemProps<TableListItem>[]}
+            />
+            <div className={styles.auth}>
+              <p className={styles.title}>权限列表：</p>
+              {authLabel.length ? (
+                <div>
+                  {authLabel.map((auth) => (
+                    <div className={styles.label} key={auth.value}>
+                      {auth.label}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div>暂无权限</div>
+              )}
+            </div>
+          </>
         )}
       </Drawer>
     </PageContainer>

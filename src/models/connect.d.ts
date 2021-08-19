@@ -3,6 +3,7 @@ import { GlobalModelState } from './global';
 import { UserModelState } from './user';
 import type { ConsumeModelState } from '@/pages/Consume/model';
 import type { StateType } from './login';
+import type {TaoRechargeModelState} from '@/pages/TaoRecharge/data'
 
 export { GlobalModelState, UserModelState };
 
@@ -25,6 +26,7 @@ export type ConnectState = {
   user: UserModelState;
   login: StateType;
   consume: ConsumeModelState;
+  taoRecharge:TaoRechargeModelState;
 };
 
 export type Route = {

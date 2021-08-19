@@ -26,7 +26,8 @@ const RechargeList = (props: RechargeProps) => {
             return (
               <>
                 {index + 1}. {createdAt}消費成功，次數：
-                <span className={styles.bold}>{row.consumeNum}</span> 次
+                <span className={styles.bold}>{row.consumeNum}</span> 次。
+                {row.remark ? `备注：${row.remark}` : null}
               </>
             );
           },

@@ -43,3 +43,12 @@ export type VipParams = {
   sex: '0' | '1';
   updatedAt: Date;
 };
+
+export type CardTypeProps = {
+  label: string;
+  value: string;
+  total: number;
+  money: number;
+  month: number;
+  cardType: '0' | '1';
+};

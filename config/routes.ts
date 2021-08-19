@@ -61,25 +61,59 @@
               //   authority: 'company',
               //   component: './Company',
               // },
-              // // {
-              // //   name: 'list.table-list',
-              // //   icon: 'table',
-              // //   path: '/list',
-              // //   component: './TableList',
-              // // },
               {
                 name: '畅玩消费',
                 icon: 'table',
                 path: '/consume',
                 // authority: 'consume',
-                component: './Consume',
+                component: '../layouts/BlankLayout',
+                routes: [
+                  {
+                    path: '/consume/tao',
+                    name: '淘气堡',
+                    authority: 'consume-tao',
+                    icon: 'smile',
+                    component: './Consume',
+                  },
+                ]
               },
               {
-                name: '淘气包会员',
+                name: '充值记录',
                 icon: 'table',
-                path: '/tao-recharge',
+                path: '/recharge-record',
                 // authority: 'consume',
-                component: './TaoRecharge',
+                component: '../layouts/BlankLayout',
+                routes: [
+                  {
+                    path: '/recharge-record/tao',
+                    authority: 'rechargeRecord-tao',
+                    name: '淘气堡',
+                    icon: 'smile',
+                    component: './TaoRecharge',
+                  },
+                ]
+              }, 
+              {
+                name: '消费记录',
+                icon: 'table',
+                path: '/consume-record',
+                component: '../layouts/BlankLayout',
+                routes: [
+                  {
+                    path: '/consume-record/tao',
+                    authority: 'consumeRecord-tao',
+                    name: '淘气堡',
+                    icon: 'smile',
+                    component: './ConsumeRecord',
+                  },
+                ]
+              },
+              {
+                name: '会员信息',
+                icon: 'table',
+                path: '/vip',
+                // authority: 'consume',
+                component: './Vip',
               },
               // {
               //   name: '淘气包会员',

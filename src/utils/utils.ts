@@ -146,5 +146,6 @@ export const getUrlByAuthCode = (authCode: string) => {
     return url;
   };
   const res = filterRoute(routes);
+  console.log('res', res)
   return res;
 };

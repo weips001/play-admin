@@ -57,13 +57,14 @@ const Login: React.FC<LoginProps> = (props) => {
     });
     const { auth } = userInfo;
     if (auth.length) {
-      console.log(auth[0]);
-      const url = getUrlByAuthCode(auth[0]);
-      if (url) {
-        return history.replace(url);
-      }
-      message.error('路径有误');
-      return false;
+      // TODO: 暂时先写死的路径
+      // console.log(auth[0]);
+      return history.replace('/consume/tao');
+      // const url = getUrlByAuthCode(auth[0]);
+      // if (url) {
+      // }
+      // message.error('路径有误');
+      // return false;
     }
     message.error('暂无页面权限无法登陆，请联系管理员');
     // history.replace('/');

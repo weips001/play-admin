@@ -18,13 +18,15 @@ import ProForm, {
 import type { ProDescriptionsItemProps } from '@ant-design/pro-descriptions';
 import ProDescriptions from '@ant-design/pro-descriptions';
 import type { FormValueType } from './components/UpdateForm';
-import type { TableListItem } from './data.d';
+import type { TableListItem, TaoRechargeModelState } from './data.d';
 import { getTableList, update, add, remove, getUserByPhone } from './service';
 import { ExclamationCircleOutlined, UploadOutlined } from '@ant-design/icons';
 import { sexType, rechargeType, cardTypeEnum } from '@/utils/constant';
 import Recharge from './components/Recharge';
 import Consume from './components/Consume';
 import moment from 'moment';
+import { connect, Dispatch } from 'umi';
+import { ConnectState } from '@/models/connect';
 
 const { confirm } = Modal;
 /**
@@ -79,7 +81,13 @@ const compStatusList = {
   },
 };
 
-const TableList: React.FC = () => {
+type TaoRechargeProps = {
+  searchForm: TaoRechargeModelState['searchForm'];
+  dispatch: Dispatch;
+};
+
+const TableList: React.FC<TaoRechargeProps> = (props) => {
+  const { searchForm, dispatch } = props;
   /** 新建窗口的弹窗 */
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   /** 分布更新窗口的弹窗 */
@@ -233,60 +241,51 @@ const TableList: React.FC = () => {
       hideInSearch: true,
       valueType: 'date',
     },
-    {
-      title: '操作',
-      dataIndex: 'option',
-      valueType: 'option',
-      render: (_, record) => {
-        const { cardType, overdate } = record;
-        const operate = [
-          <a
-            key="recharge"
-            onClick={() => {
-              setRechargeVisible(true);
-              setCurrentRow(record);
-            }}
-          >
-            充值
-          </a>,
-
-          // <a
-          //   key="subscribeAlert"
-          //   onClick={async () => {
-          //     await confirmDel(record.id);
-          //   }}
-          // >
-          //   删除
-          // </a>,
-        ];
-        const consumeBtn = (
-          <a
-            key="consume"
-            onClick={() => {
-              consumeTao(record);
-            }}
-          >
-            消费
-          </a>
-        );
-        const editBtn = (
-          <a
-            key="config"
-            onClick={() => {
-              handleModalVisible(true);
-              setCurrentRow(record);
-              modalRef.current?.setFieldsValue(record);
-            }}
-          >
-            编辑
-          </a>
-        );
-        if (canUse(record)) {
-          operate.push(consumeBtn, editBtn);
-        }
-        return operate;
-      },
-    },
+    // {
+    //   title: '操作',
+    //   dataIndex: 'option',
+    //   valueType: 'option',
+    //   render: (_, record) => {
+    //     const { cardType, overdate } = record;
+    //     const operate = [
+    //       <a
+    //         key="recharge"
+    //         onClick={() => {
+    //           setRechargeVisible(true);
+    //           setCurrentRow(record);
+    //         }}
+    //       >
+    //         充值
+    //       </a>,
+    //     ];
+    //     const consumeBtn = (
+    //       <a
+    //         key="consume"
+    //         onClick={() => {
+    //           consumeTao(record);
+    //         }}
+    //       >
+    //         消费
+    //       </a>
+    //     );
+    //     const editBtn = (
+    //       <a
+    //         key="config"
+    //         onClick={() => {
+    //           handleModalVisible(true);
+    //           setCurrentRow(record);
+    //           modalRef.current?.setFieldsValue(record);
+    //         }}
+    //       >
+    //         编辑
+    //       </a>
+    //     );
+    //     if (canUse(record)) {
+    //       operate.push(consumeBtn, editBtn);
+    //     }
+    //     return operate;
+    //   },
+    // },
   ];
   const cancelRechargeModal = () => {
     setRechargeVisible(false);
@@ -322,37 +321,6 @@ const TableList: React.FC = () => {
   const okRechargeModal = () => {
     cancelRechargeModal();
     actionRef.current?.reload();
-  };
-  const props = {
-    name: 'file',
-    showUploadList: false,
-    action: '/api/vipUpload',
-    onChange(info) {
-      const { response, name, status } = info.file;
-      if (status !== 'uploading') {
-        console.log(info.file, info.fileList);
-      }
-      if (status === 'done') {
-        if (response.code === 0) {
-          message.success(`${name} 上传成功。`);
-          if (actionRef.current) {
-            actionRef.current.reload();
-          }
-        } else {
-          const list = response.data.errInfo.map((item) => (
-            <p>
-              第{item.index + 2}行数据上传失败，失败原因：{item.msg}
-            </p>
-          ));
-          Modal.error({
-            title: '上传失败！',
-            content: list,
-          });
-        }
-      } else if (info.file.status === 'error') {
-        message.error(`${name} 上传失败。`);
-      }
-    },
   };
   const Userprops = {
     name: 'file',
@@ -396,6 +364,18 @@ const TableList: React.FC = () => {
         search={{
           labelWidth: 120,
         }}
+        form={{
+          initialValues: searchForm,
+          onValuesChange(_, values) {
+            dispatch({
+              type: 'taoRecharge/saveSearchForm',
+              payload: {
+                searchForm: values,
+              },
+            });
+            console.log(values);
+          },
+        }}
         toolBarRender={() => [
           // <Upload {...props}>
           //   <Button icon={<UploadOutlined />}>上传充值记录</Button>
@@ -403,16 +383,16 @@ const TableList: React.FC = () => {
           // <Upload {...Userprops}>
           //   <Button icon={<UploadOutlined />}>上传会员</Button>
           // </Upload>,
-          <Button
-            type="primary"
-            key="primary"
-            onClick={() => {
-              setCurrentRow(undefined);
-              handleModalVisible(true);
-            }}
-          >
-            <PlusOutlined /> 新增
-          </Button>,
+          // <Button
+          //   type="primary"
+          //   key="primary"
+          //   onClick={() => {
+          //     setCurrentRow(undefined);
+          //     handleModalVisible(true);
+          //   }}
+          // >
+          //   <PlusOutlined /> 新增
+          // </Button>,
         ]}
         request={(params, sorter, filter) => getTableList({ ...params, sorter, filter })}
         columns={columns}
@@ -662,4 +642,8 @@ const TableList: React.FC = () => {
   );
 };
 
-export default TableList;
+export default connect((state: ConnectState) => {
+  return {
+    searchForm: state.taoRecharge.searchForm,
+  };
+})(TableList);

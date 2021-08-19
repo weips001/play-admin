@@ -31,7 +31,8 @@ const RechargeRecord = (props: RechargeProps) => {
           render(_, row) {
             return (
               <>
-                充值成功，金额￥<span className={styles.bold}>{row.money}</span> 元
+                充值成功，金额￥<span className={styles.bold}>{row.money}</span> 元。
+                {row.remark ? `备注：${row.remark}` : null}
               </>
             );
           },
