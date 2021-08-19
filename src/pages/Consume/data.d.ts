@@ -1,13 +1,15 @@
 export type TableListItem = {
   id: string;
-  compName: string;
-  status: string;
-  address: string;
-  bossName: string;
-  bossPhone: string;
-  dueDate: string;
-  dueDate: string;
-  createTime: number;
+  cardId: string;
+  cardType: '0' | '1';
+  createdAt: Date;
+  isYearCard: boolean;
+  money: number;
+  remark: string;
+  restTotal: number;
+  total: number;
+  usedTotal: number;
+  vipId: string;
 };
 
 export type TableListPagination = {
@@ -52,3 +54,8 @@ export type CardTypeProps = {
   month: number;
   cardType: '0' | '1';
 };
+export interface CommonRes<T> {
+  code: 0 | 1;
+  data: T;
+  msg: string;
+}

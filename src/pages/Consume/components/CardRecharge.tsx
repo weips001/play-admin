@@ -76,6 +76,9 @@ const CardRecharge: React.FC<CardRechargeProps> = (props) => {
       }}
     >
       <ProForm.Group>
+        <ProFormText width="md" name="cardId" label="卡号" />
+      </ProForm.Group>
+      <ProForm.Group>
         <ProFormRadio.Group
           name="cardType"
           radioType="button"
@@ -95,9 +98,6 @@ const CardRecharge: React.FC<CardRechargeProps> = (props) => {
         ></ProFormRadio.Group>
       </ProForm.Group>
       <ProForm.Group>
-        <ProFormText width="md" name="cardId" label="卡号" placeholder="请输入卡号" />
-      </ProForm.Group>
-      <ProForm.Group>
         <ProFormText width="md" name="money" readonly label="金额" />
         <ProFormText width="md" name="total" label="次数" readonly />
       </ProForm.Group>
@@ -115,9 +115,9 @@ const CardRecharge: React.FC<CardRechargeProps> = (props) => {
           placeholder="请选择有效期"
         />
       </ProForm.Group>
-      <ProForm.Group>
+      {/* <ProForm.Group>
         <ProFormDateTimePicker name="createAt" label="充值时间" />
-      </ProForm.Group>
+      </ProForm.Group> */}
       <ProForm.Group>
         <ProFormTextArea width="md" name="remark" label="备注" />
       </ProForm.Group>

@@ -3,9 +3,7 @@ import type { ChangeEvent } from 'react';
 import React, { useState, useRef, useEffect } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import type { ActionType } from '@ant-design/pro-table';
-
 import ProCard from '@ant-design/pro-card';
-
 import type { Dispatch } from 'umi';
 import { connect } from 'umi';
 import ProDescriptions from '@ant-design/pro-descriptions';
@@ -21,6 +19,7 @@ import MultipleVipModal from './components/MultipleVipModal';
 import type { ConnectState } from '@/models/connect';
 import type { ConsumeModelState, ActionOptions, TabOptions } from './model';
 import { add, update } from './service';
+import type { TableListItem, CommonRes, VipParams } from './data';
 
 const { Search } = Input;
 
@@ -99,7 +98,7 @@ const TableList: React.FC<ConsumeProps> = (props) => {
     setActiveTab();
     serActiveAction();
   };
-  const saveVipInfo = (value?: ConsumeProps['vipInfo']) => {
+  const saveVipInfo = (value?: VipParams) => {
     dispatch({
       type: 'consume/saveVipInfo',
       payload: {
@@ -148,7 +147,7 @@ const TableList: React.FC<ConsumeProps> = (props) => {
     setUserMoadlVisible(false);
   };
   const okUserModal = async (values: any) => {
-    let res = {};
+    let res: CommonRes<VipParams>;
     if (vipInfo) {
       const params = {
         ...values,
@@ -186,6 +185,7 @@ const TableList: React.FC<ConsumeProps> = (props) => {
   };
 
   const cancelConsumeModal = () => {
+    setCurrentRow(undefined);
     setConsumeVisible(false);
   };
   const fetchVipRecord = () => {
@@ -202,7 +202,7 @@ const TableList: React.FC<ConsumeProps> = (props) => {
     fetchVipRecord();
     setConsumeVisible(false);
   };
-  const showConsumeModal = (record) => {
+  const showConsumeModal = (record: any) => {
     setCurrentRow(record);
     setConsumeVisible(true);
   };
